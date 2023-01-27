@@ -1,33 +1,24 @@
-const express=require("express")
-const app=express();
-const morgan=require('morgan')
-app.use(morgan('div'))
-const html=require ('html-template-tag')
-app.use(express.static("./assests"));
-app.use(express.urlencoded({ extended: false }));
-const { addPage, editPage, main, userList, userPages, wikiPage } = require('./views');
-const { db, user, page } = require('./models');
- 
-db.authenticate() 
-  .then(() => { 
-    console.log('connected to the database'); 
-})
-//creating tables user and pages
-const init= async()=>{
-  const initialization = await db.sync()
-return initialization;
-  
-}
-init();
-app.get('/',(req,res)=>{
-  res.send("hello world");  
+const express = require("express");
+const app = express();
+const morgan = require("morgan");
+const path = require("path");
+const {notFoundPage}=require('./views');
+
+app.use(morgan("dev")); //logging middleware
+app.use(express.static(path.join(__dirname, "./public"))); //serving up static files (e.g. css files)
+app.use(express.urlencoded({ extended: false })); //parsing middleware for form input data
+app.use(express.json());
+app.use(require("method-override")("_method"));
+
+app.use("/wiki", require("./routes/wiki"));
+app.use("/users", require("./routes/users"));
+
+app.use((req, res) => {
+  res.status(404).send(notFoundPage());
 });
 
+app.get("/", function (req, res) {
+  res.redirect("/wiki/");
+});
 
-
-
-
-const PORT=3000;
-app.listen(PORT,()=>{
-    console.log("Listning to port 4000");
-})
+module.exports = app;
