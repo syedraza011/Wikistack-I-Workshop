@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const path = require("path");
-const {notFoundPage}=require('./views');
+const { notFoundPage } = require("./views");
 
 app.use(morgan("dev")); //logging middleware
 app.use(express.static(path.join(__dirname, "./public"))); //serving up static files (e.g. css files)
@@ -19,6 +19,12 @@ app.use((req, res) => {
 
 app.get("/", function (req, res) {
   res.redirect("/wiki/");
+});
+// added a new fucntion
+app.use((err, req, res, next) => {
+  // console.log("eror");
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
 });
 
 module.exports = app;

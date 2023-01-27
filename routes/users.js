@@ -16,12 +16,13 @@ router.get("/", async (req, res, next) => {
 // GET /users/:userId
 router.get("/:userId", async (req, res, next) => {
   try {
-    const user = await User.findByPk(req.params.userId);
-    const pages = await Page.findAll({
-      where: {
-        authorId: req.params.userId
-      }
-    });
+    const pages = await Page.findAll({include: req.params.userId, authorId: req.params.userId});
+    // const user = await User.findByPk(req.params.userId);
+    // const pages = await Page.findAll({
+    //   where: {
+    //     authorId: req.params.userId
+    //   }
+    // });
 
     res.send(userPages(user, pages));
   } catch (error) {
