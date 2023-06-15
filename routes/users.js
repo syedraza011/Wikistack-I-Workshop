@@ -17,6 +17,8 @@ router.get("/", async (req, res, next) => {
 router.get("/:userId", async (req, res, next) => {
   try {
     const pages = await Page.findAll({include: req.params.userId, authorId: req.params.userId});
+    pages.belogsTo(User);
+    User.hasMany(Page,{foreignKey: 'authorId'});
     // const user = await User.findByPk(req.params.userId);
     // const pages = await Page.findAll({
     //   where: {
@@ -24,7 +26,7 @@ router.get("/:userId", async (req, res, next) => {
     //   }
     // });
 
-    res.send(userPages(user, pages));
+    // res.send(userPages(user, pages));
   } catch (error) {
     next(error);
   }
